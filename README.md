@@ -3,7 +3,7 @@
 ### Installation
 
 ```
-pip3 install -U Flask
+pip3 install -U Flask newsapi-python
 ```
 
 ### Run
