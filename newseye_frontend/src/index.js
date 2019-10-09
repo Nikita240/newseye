@@ -1,13 +1,16 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { Provider, themes } from '@stardust-ui/react'
+import { BrowserRouter } from 'react-router-dom'
 import * as serviceWorker from './serviceWorker';
 import App from './App'
 
 ReactDOM.render(
-  <Provider theme={themes.teams}>
-    <App />
-  </Provider>,
+  <BrowserRouter>
+    <Provider theme={themes.teams}>
+      <App />
+    </Provider>
+  </BrowserRouter>,
   document.getElementById('root'),
 )
 
