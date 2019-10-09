@@ -1,5 +1,4 @@
 from newsapi import NewsApiClient
-from gensim.summarization.summarizer import summarize
 
 class Newseye:
     def __init__(self):
@@ -9,17 +8,16 @@ class Newseye:
 
         return self.newsapi.get_sources()
 
-    def news(self, source_id):
+    def news(self, source_id=None):
 
-        top_headlines = self.newsapi.get_top_headlines(sources=source_id,
-                                                language='en')
+        if source_id is None:
+            top_headlines = self.newsapi.get_top_headlines(country='us',
+                                                           language='en')
+        else:
+            top_headlines = self.newsapi.get_top_headlines(sources=source_id,
+                                                           language='en')
 
         return top_headlines
-
-''' Returns summary of text. pct determines the proportion of the number of sentences of the original text to be chosen for the summary. '''    
-    def summarize(self, text, pct):
-        summary = summarize(text,ratio=pct,split=False);
-        return summary;
 
 
 

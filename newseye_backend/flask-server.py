@@ -9,6 +9,10 @@ newseye = Newseye()
 def index():
     return newseye.sources()
 
-@app.route('/sources/<source_id>')
-def source(source_id):
+@app.route('/sources/<source_id>/news')
+def news_from_source(source_id):
     return newseye.news(source_id)
+
+@app.route('/news')
+def news():
+    return newseye.news()
