@@ -3,11 +3,12 @@
 ### Installation
 
 ```
-pip3 install -U Flask newsapi-python
+pip3 install -U Flask
+pip3 install --target ./package newsapi-python
 ```
 
-### Run
+### Run test server
 
 ```
-env FLASK_APP=newseye.py FLASK_DEBUG=1 flask run
+env FLASK_APP=flask-server.py FLASK_DEBUG=1 flask run
 ```
