@@ -4,7 +4,7 @@
 
 ```
 pip3 install -U Flask
-pip3 install --target ./package newsapi-python
+pip3 install --target ./package newsapi-python gensim
 ```
 
 ### Run test server
