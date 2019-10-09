@@ -1,0 +1,1 @@
+aws lambda update-function-code --function-name get-sources --zip-file fileb://lambda.zip

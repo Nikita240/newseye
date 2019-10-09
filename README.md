@@ -10,5 +10,22 @@ pip3 install --target ./package newsapi-python
 ### Run test server
 
 ```
-env FLASK_APP=flask-server.py FLASK_DEBUG=1 flask run
+cd newseye_backend
+./run.sh
+```
+
+### Build zip file for deployment
+
+```
+cd newseye_backend
+./build.sh
+```
+
+### Deploy to AWS Lambda
+
+You will to have installed the AWS CLI and to run `aws config`. Follow the instructions [here](https://aws.amazon.com/cli/).
+
+```
+cd newseye_backend
+./deploy.sh
 ```
