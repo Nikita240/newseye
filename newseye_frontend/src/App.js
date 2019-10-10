@@ -1,18 +1,19 @@
 import React from 'react';
 import './App.css';
 import SplashPage from './SplashPage';
+import Sources from './Sources';
+import Articles from './Articles';
 import { Route, Switch } from 'react-router-dom'
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
+    <div className="App" tabIndex={0} style={{minHeight: "3000px"}}>
         <Switch>
           <Route exact path="/" component={SplashPage} />
+          <Route exact path="/sources" component={Sources} />
+          <Route path="/sources/:id" component={Articles} />
         </Switch>
-      </header>
-      <div style={{background: "transparent"}}>Icons made by <a href="https://www.flaticon.com/authors/prosymbols" title="Prosymbols">Prosymbols</a> from <a href="https://www.flaticon.com/"             title="Flaticon">www.flaticon.com</a></div>
-    </div>
+      </div>
   );
 }
 
