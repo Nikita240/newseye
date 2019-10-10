@@ -24,9 +24,21 @@ class Newseye:
             articles = self.newsapi.get_top_headlines(sources=source_id,
                                                            language='en',
                                                            page_size=10)
-
         return articles
 
+    def search(self, search_query, source_id=None):
+        if source_id is None:
+            articles = self.newsapi.get_top_headlines(q=search_query,
+                                                           country='us',
+                                                           language='en',
+                                                           page_size=10)
+        else:
+            articles = self.newsapi.get_top_headlines(q=search_query,
+                                                           sources=source_id,
+                                                           language='en',
+                                                           page_size=10)
+        return articles
+                                                               
     def test(self):
 
         return self.summarize('http://www.cnn.com/2019/10/09/politics/donald-trump-impeachment-mitch-mcconnell/index.html')
