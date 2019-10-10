@@ -7,7 +7,7 @@ import App from './App'
 
 ReactDOM.render(
   <BrowserRouter>
-    <Provider theme={themes.teams}>
+    <Provider theme={themes.teamsDark}>
       <App />
     </Provider>
   </BrowserRouter>,
