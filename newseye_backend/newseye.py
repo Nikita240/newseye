@@ -25,30 +25,31 @@ class Newseye:
                                                            language='en',
                                                            page_size=10)
 
-        return articless
+        return articles
 
     def test(self):
-        article = NewsPlease.from_url('http://www.cnn.com/2019/10/09/politics/donald-trump-impeachment-mitch-mcconnell/index.html')
-        
-        return article.text
 
-	def summarize(self, url):
-		article = NewsPlease.from_url(url)	
-		text = article.text
+        return self.summarize('http://www.cnn.com/2019/10/09/politics/donald-trump-impeachment-mitch-mcconnell/index.html')
 
-		data = {'title':title,
-        	'text':text,
-        	'sentences_number':1
-			}
-		headers = {'Accept':'text/xml',
-           'X-AYLIEN-TextAPI-Application-Key':TEXT_ANALYZER_API_KEY, 
-           'X-AYLIEN-TextAPI-Application-ID':TEXT_ANALYZER_APP_ID,
-			}
+    def summarize(self, url):
 
-		r = requests.post(url=SUMMARIZER_END_POINT, data=data, headers=headers)
-		result = r.text
-		start = result.find('<sentence>') + len('<sentence>')
-		end = result.find('</sentence>')
+        article = NewsPlease.from_url(url)
 
-		return result[start:end]
+        data = {
+            'title': article.title,
+            'text': article.text,
+            'sentences_number': 1
+        }
+        headers = {
+            'Accept':'text/xml',
+            'X-AYLIEN-TextAPI-Application-Key':TEXT_ANALYZER_API_KEY, 
+            'X-AYLIEN-TextAPI-Application-ID':TEXT_ANALYZER_APP_ID,
+        }
+
+        r = requests.post(url=SUMMARIZER_END_POINT, data=data, headers=headers)
+        result = r.text
+        start = result.find('<sentence>') + len('<sentence>')
+        end = result.find('</sentence>')
+
+        return result[start:end]
 
