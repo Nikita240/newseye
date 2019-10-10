@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 
 import { withRouter } from 'react-router-dom';
-import {Button, Flex, Image, Header, Text} from "@stardust-ui/react";
+import { AutoFocusZone, Box, Button, Flex, Image, Header, Text, Grid, Loader } from "@stardust-ui/react";
 import './App.css';
 import NewsRestClient from './NewsRestClient';
-import WatsonRestClient from './WatsonRestClient';
 
 export const Articles = withRouter(({ history }, props) => {
   
@@ -17,17 +16,39 @@ export const Articles = withRouter(({ history }, props) => {
   useEffect(() => {
     const client = new NewsRestClient();
     const getArticles = async () => {
-      // Pass our param (:id) to the API call
       const currentPath = history.location.pathname.split('/');
-      const sourceId = currentPath[currentPath.length - 1];
-      const {articles} = await client.getArticlesBySource(sourceId);
-      const newArticles = [];
-      await asyncForEach(articles, async article => {
-        const card = await getArticleCard(article.title, article.url, article.urlToImage, article.source.nam, history);
-        newArticles.push(card);
-      });
-      console.log(JSON.stringify(newArticles));
-      setArticles({articles: newArticles});
+      if (history.location.pathname.indexOf('search') > 0) {
+        if (currentPath.length > 3) {
+          const selectedSourceId = currentPath[currentPath.length - 1]
+          const searchQuery = currentPath[currentPath.length - 2];
+          const {articles} = await client.getArticlesBySearch(searchQuery, selectedSourceId);
+          const newArticles = [];
+          await asyncForEach(articles, async article => {
+            const card = await getArticleCard(article.title, article.url, article.urlToImage, article.source.name, article.img_classes, article.summary, history);
+            newArticles.push(card);
+          });
+          setArticles({articles: newArticles});
+        } else {
+          const searchQuery = currentPath[currentPath.length - 1];
+          const {articles} = await client.getArticlesBySearch(searchQuery);
+          const newArticles = [];
+          await asyncForEach(articles, async article => {
+            const card = await getArticleCard(article.title, article.url, article.urlToImage, article.source.name, article.img_classes, article.summary, history);
+            newArticles.push(card);
+          });
+          setArticles({articles: newArticles});
+        }
+        
+      } else {
+        const sourceId = currentPath[currentPath.length - 1];
+        const {articles} = await client.getArticlesBySource(sourceId);
+        const newArticles = [];
+        await asyncForEach(articles, async article => {
+          const card = await getArticleCard(article.title, article.url, article.urlToImage, article.source.name, article.img_classes, article.summary, history);
+          newArticles.push(card);
+        });
+        setArticles({articles: newArticles});
+      }
     }
 
     // Invoke the async function
@@ -42,7 +63,7 @@ export const Articles = withRouter(({ history }, props) => {
           overflow: "scroll"
         }}
       >
-      <div tabIndex={0} aria-label={"Please select which news sources to read articles from"}>
+      <div tabIndex={0} aria-label={"Please select which news articles to read. Press tab to step into the grid. The first tab per item will select the title, the second the summary, and the third a description of the image"}>
         <Header 
           styles={{
             textAlign: "left"
@@ -51,7 +72,9 @@ export const Articles = withRouter(({ history }, props) => {
           description="Select which article you would like to read" color={"yellow"} 
         />
       </div>
-      {articles.articles}
+      {articles.articles.length > 0 ? <div>
+        <AutoFocusZone><Grid content={articles.articles} columns={2}/></AutoFocusZone>
+      </div> : <Loader role={"alert"} aria-label={"Loading results..."} label={"Loading results..."}/>}
     </Flex>
   );
 });
@@ -62,51 +85,22 @@ async function asyncForEach(array, callback) {
   }
 }
 
-async function getArticleCard(title, url, imageUrl, sourceName, history){
-  const watsonClient = new WatsonRestClient();
-  const featureBag = await watsonClient.getImageFeatures(imageUrl).then(response => {
-
-    const features = response.images[0].classifiers[0].classes
-    features.sort((a,b) => {
-      return b.score - a.score;
-    }).slice(0,3);
-    const importantFeatures = [];
-    features.forEach(feature => importantFeatures.push(feature.class));
-    return importantFeatures;
-  });
-  
-  console.log(JSON.stringify(featureBag));
-
-  const content = (
-    <Flex styles={{width: "100vh"}}gap="gap.medium" padding="padding.medium" debug>
-      <Flex.Item size="size.medium">
-        <div
-          style={{
-            position: 'relative',
-          }}
-        >
-          <Image fluid src={imageUrl} />
-        </div>
-      </Flex.Item>
-      <Flex.Item grow>
-        <Flex column gap="gap.small" vAlign="stretch">
-          <Flex space="between">
-            <Header as="h3" content={title} />
-          </Flex>
-          <Text content={sourceName} />
-        </Flex>
-      </Flex.Item>
-    </Flex>
-  );
-
+async function getArticleCard(title, url, imageUrl, sourceName, imageClasses, summary, history){
   return (
-    <Button
-      key={"article_" + url}
-      styles={{maxWidth: "100%", height:"10vh"}}
-      content={content}
-      onClick={() => { window.location.href = url; }}
-    >
-    </Button>
+    <Box 
+      key={"article_box_" + url}
+      styles={{height:"20vh", width: "90vh", margin:"1px", border: "coral 1px solid", boxShadow: "rgba(0, 0, 0, 0.25) 0px 0.2rem 0.4rem -0.075rem"}}>
+      <Button
+        key={"article_" + url}
+        styles={{maxWidth: "100%", width: "70%", height:"20vh", float: "left", border: "none", boxShadow: "none"}}
+        content={<Text content={title} />}
+        onClick={() => { window.location.href = url; }}
+      >
+      </Button>
+      <Text tabIndex={0} styles={{height:"20vh", position:"fixed", color: "transparent", outline: "none"}} content={"Article summary: " + summary}></Text>
+      <Image styles={{height:"19.5vh", maxWidth: "29%", objectFit: "scale-down", zIndex: -1, float: "right"}} src={imageUrl}/>
+      <Text tabIndex={0} styles={{height:"20vh", position:"fixed", color: "transparent", outline: "none"}} content={"Image shows " + imageClasses.join()}></Text>
+    </Box>
   );
 }
 

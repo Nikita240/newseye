@@ -12,6 +12,8 @@ function App() {
           <Route exact path="/" component={SplashPage} />
           <Route exact path="/sources" component={Sources} />
           <Route path="/sources/:id" component={Articles} />
+          <Route path="/search/:searchTerm" component={Articles} />
+          <Route path="/search/:searchTerm/:selectedSourceId" component={Articles} />
         </Switch>
       </div>
   );

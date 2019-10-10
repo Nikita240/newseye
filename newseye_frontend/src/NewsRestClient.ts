@@ -11,6 +11,15 @@ export default class NewsRestClient extends GenericRestClient {
     }
 
     getArticlesBySource(id: string): SyncTasks.Promise<any> {
-        return this.performApiGet<any>('sources/' + id + '/news');
+        return this.performApiGet<any>('sources/' + id);
+    }
+
+    getArticlesBySearch(searchQuery: string, sourceId?: string): SyncTasks.Promise<any> {
+        if (sourceId !== undefined) {
+            return this.performApiGet<any>('search/' + searchQuery + '/' + sourceId);
+        } else {
+            return this.performApiGet<any>('search/' + searchQuery);
+        }
+            
     }
 }
