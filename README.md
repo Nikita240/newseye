@@ -4,7 +4,7 @@
 
 ```
 pip3 install -U Flask
-pip3 install --target ./package newsapi-python gensim
+pip3 install --target ./package news-please newsapi-python elasticache-auto-discovery pymemcache
 ```
 
 ### Run test server
