@@ -95,9 +95,17 @@ def process_articles(articles):
 
             response = requests.get(path, headers=headers)
             results = json.loads(response.text)
-            features = results['images'][0]['classifiers'][0]['classes']
-            filtered_results = list(filter(lambda x: 'color' not in x['class'] and 'person' not in x['class'], features))
-            sorted_results = sorted(filtered_results, key = lambda x: x['score'], reverse = True)[:3]
+            images = results.get('images')
+            classifiers = None
+            features = None
+            sorted_results=[]
+            if images != None:
+                classifiers = images[0].get('classifiers')
+            if classifiers != None:
+                features = classifiers[0].get('classes')
+            if features != None:
+                filtered_results = list(filter(lambda x: 'color' not in x['class'] and 'person' not in x['class'], features))
+                sorted_results = sorted(filtered_results, key = lambda x: x['score'], reverse = True)[:3]
 
             for result in sorted_results:
                 classes.append(result['class'])
