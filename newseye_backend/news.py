@@ -12,10 +12,10 @@ WATSON_TOKEN="Basic YXBpa2V5OnNOX0JMZlN5YnpocVY5TjVSbk5NVnJDVUs2M21JLTFBejdob3ds
 WATSON_URL="https://gateway.watsonplatform.net/visual-recognition/api/v3"
 
 #elasticache settings
-# elasticache_config_endpoint = "news-cache.sjxgb8.cfg.usw2.cache.amazonaws.com:11211"
-# nodes = elasticache_auto_discovery.discover(elasticache_config_endpoint)
-# nodes = map(lambda x: (x[1], int(x[2])), nodes)
-# memcache_client = HashClient(nodes)
+elasticache_config_endpoint = "newseye-cache.sjxgb8.cfg.usw2.cache.amazonaws.com:11211"
+nodes = elasticache_auto_discovery.discover(elasticache_config_endpoint)
+nodes = map(lambda x: (x[1], int(x[2])), nodes)
+memcache_client = HashClient(nodes)
 
 newsapi = NewsApiClient(api_key='55a335b380f54a699d4c1318ee3a6311')
 
@@ -54,11 +54,11 @@ def get_summary(url):
     summary = memcache_client.get(url)
 
     if (summary):
-        return summary
+        return summary.decode("utf-8")
 
     summary = summarize(url)
 
-    memcache_client.set(url, summary)
+    memcache_client.set(url, summary.encode("utf-8"))
 
     return summary
 
@@ -102,7 +102,7 @@ def process_articles(articles):
             for result in sorted_results:
                 classes.append(result['class'])
 
-        # article['summary'] = get_summary(article['url'])
+        article['summary'] = get_summary(article['url'])
         article['img_classes'] = classes
 
     return articles
