@@ -1,5 +1,5 @@
 from flask import Flask
-from sources import sources
+from news import sources
 from news import news
 import json
 

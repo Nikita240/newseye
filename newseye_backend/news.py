@@ -17,6 +17,11 @@ memcache_client = HashClient(nodes)
 
 newsapi = NewsApiClient(api_key='55a335b380f54a699d4c1318ee3a6311')
 
+def sources():
+
+    with open('sources.json', 'r') as file:
+        return json.load(file)
+
 def news(source_id=None):
 
     if source_id is None:

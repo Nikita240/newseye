@@ -1,5 +1,5 @@
 import json
-from sources import sources
+from news import sources
 from news import news
 
 def get_sources(event, context): 
