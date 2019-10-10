@@ -1,5 +1,6 @@
 from flask import Flask
 from newseye import Newseye
+import json
 
 app = Flask(__name__)
 
@@ -16,3 +17,7 @@ def news_from_source(source_id):
 @app.route('/news')
 def news():
     return newseye.news()
+
+@app.route('/test')
+def test():
+    return newseye.test()
