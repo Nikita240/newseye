@@ -1,10 +1,19 @@
 from newsapi import NewsApiClient
 import requests
 from newsplease import NewsPlease
+import json
+import elasticache_auto_discovery
+from pymemcache.client.hash import HashClient
 
 SUMMARIZER_END_POINT="https://api.aylien.com/api/v1/summarize"
 TEXT_ANALYZER_API_KEY="10f46c5ac422962c58e95633365fe91b"
 TEXT_ANALYZER_APP_ID="d34c33db"
+
+#elasticache settings
+elasticache_config_endpoint = "news-cache.sjxgb8.cfg.usw2.cache.amazonaws.com:11211"
+nodes = elasticache_auto_discovery.discover(elasticache_config_endpoint)
+nodes = map(lambda x: (x[1], int(x[2])), nodes)
+memcache_client = HashClient(nodes)
 
 class Newseye:
     def __init__(self):
@@ -41,7 +50,23 @@ class Newseye:
                                                                
     def test(self):
 
-        return self.summarize('http://www.cnn.com/2019/10/09/politics/donald-trump-impeachment-mitch-mcconnell/index.html')
+        for article in articles['articles']:
+            article['summary'] = self.get_summary(article['url'])
+
+        return articles
+
+    def get_summary(self, url):
+
+        summary = memcache_client.get(url)
+
+        if (summary):
+            return summary
+
+        summary = self.summarize(url)
+
+        memcache_client.set(url, summary)
+
+        return summary
 
     def summarize(self, url):
 
