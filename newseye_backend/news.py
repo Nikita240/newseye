@@ -17,7 +17,7 @@ nodes = elasticache_auto_discovery.discover(elasticache_config_endpoint)
 nodes = map(lambda x: (x[1], int(x[2])), nodes)
 memcache_client = HashClient(nodes)
 
-newsapi = NewsApiClient(api_key='55a335b380f54a699d4c1318ee3a6311')
+newsapi = NewsApiClient(api_key='f3f27939e3ad47e8b4d6d11395e1eb95')
 
 def sources():
 
