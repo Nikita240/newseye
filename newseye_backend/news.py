@@ -17,6 +17,9 @@ memcache_client = HashClient(nodes)
 
 newsapi = NewsApiClient(api_key='55a335b380f54a699d4c1318ee3a6311')
 
+WATSON_TOKEN="Basic YXBpa2V5OnNOX0JMZlN5YnpocVY5TjVSbk5NVnJDVUs2M21JLTFBejdob3dsdk5VSS0z"
+WATSON_URL="https://gateway.watsonplatform.net/visual-recognition/api/v3"
+
 def news(source_id=None):
 
     if source_id is None:
@@ -29,7 +32,22 @@ def news(source_id=None):
                                                         page_size=10)
 
     for article in articles['articles']:
+        img_url = article['urlToImage']
+        path = WATSON_URL + '/classify?url=' + img_url + '&version=2018-03-19&classifier_ids=default'
+        headers = {'Authorization':WATSON_TOKEN}
+
+        response = requests.get(path, headers=headers)
+        results = json.loads(response.text)
+        features = results['images'][0]['classifiers'][0]['classes']
+        filtered_results = list(filter(lambda x: 'color' not in x['class'] and 'person' not in x['class'], features))
+        sorted_results = sorted(filtered_results, key = lambda x: x['score'], reverse = True)[:3]
+
+        classes = []
+        for result in sorted_results:
+            classes.append(result['class'])
+
         article['summary'] = get_summary(article['url'])
+        article['img_classes'] = classes
 
     return articles
 
@@ -47,7 +65,6 @@ def search(search_query, source_id=None):
     return articles
 
 def get_summary(url):
-
     summary = memcache_client.get(url)
 
     if (summary):
