@@ -32,7 +32,10 @@ class Newseye:
         
         return article.text
 
-	def summarize(self, text):
+	def summarize(self, url):
+		article = NewsPlease.from_url(url)	
+		text = article.text
+
 		data = {'title':title,
         	'text':text,
         	'sentences_number':1
